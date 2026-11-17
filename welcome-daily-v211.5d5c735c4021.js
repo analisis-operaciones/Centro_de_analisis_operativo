@@ -1,0 +1,1 @@
+(()=>{const b=document.getElementById('welcomeDaily');if(b)b.addEventListener('click',()=>window.open('operacion-diaria.html','_blank','noopener'));})();
