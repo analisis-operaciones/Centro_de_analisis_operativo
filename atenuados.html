@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es"><head><meta name="pa-version" content="Atenuados V-2.52"><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://server.arcgisonline.com; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; media-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Atenuados y Dashboard · V-2.52</title>
+<html lang="es"><head><meta name="pa-version" content="Atenuados V-2.53"><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://server.arcgisonline.com; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; media-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Atenuados y Dashboard · V-2.52</title>
 <link rel="stylesheet" href="vendor/leaflet-1.9.4/leaflet.css">
 <link rel="stylesheet" href="atenuados-v240.css">
 <script defer src="vendor/leaflet-1.9.4/leaflet.js"></script>
-<script src="atenuados-cripto-v249.js"></script>
+<script src="seguridad-v253.js"></script><script src="atenuados-cripto-v253.js"></script>
 <script defer src="atenuados-reglas-v240.js"></script>
 <script defer src="atenuados-carga-v240.js"></script>
 <script defer src="atenuados-tablero-v240.js"></script>
@@ -34,7 +34,7 @@
 </div></div></header>
 <main>
 <div class="bases"><span id="at240-clientes">Clientes: sin base</span><span id="at240-potencias">Potencias: sin base</span><span id="at240-matriz">Matriz: sin base</span><button id="at240-run" type="button" disabled>Análisis</button><small id="at240-storage-note">Bases guardadas localmente en este navegador · Análisis manual</small></div>
-<div class="navigation"><nav class="tabs" role="tablist" aria-label="Tableros del módulo"><button type="button" role="tab" id="tab-atenuados" aria-controls="panel-atenuados" aria-selected="true"><svg class="icon"><use href="#i-ports"/></svg>Atenuados</button><button type="button" role="tab" id="tab-dashboard" aria-controls="panel-dashboard" aria-selected="false" tabindex="-1"><svg class="icon"><use href="#i-bars"/></svg>Dashboard</button></nav><p id="at240-status" class="status" role="status" aria-live="polite">Preparando análisis…</p><span class="preview-label">Atenuados V-2.52 · RX_20h</span></div>
+<div class="navigation"><nav class="tabs" role="tablist" aria-label="Tableros del módulo"><button type="button" role="tab" id="tab-atenuados" aria-controls="panel-atenuados" aria-selected="true"><svg class="icon"><use href="#i-ports"/></svg>Atenuados</button><button type="button" role="tab" id="tab-dashboard" aria-controls="panel-dashboard" aria-selected="false" tabindex="-1"><svg class="icon"><use href="#i-bars"/></svg>Dashboard</button></nav><p id="at240-status" class="status" role="status" aria-live="polite">Preparando análisis…</p><span class="preview-label">Atenuados V-2.53 · RX_20h</span></div>
 
 <section id="panel-atenuados" role="tabpanel" aria-labelledby="tab-atenuados">
 <div class="toolbar">
@@ -82,7 +82,7 @@
 
 <section id="panel-dashboard" class="dashboard-pending" role="tabpanel" aria-labelledby="tab-dashboard" hidden><article class="card"><svg class="icon orange"><use href="#i-bars"/></svg><h2>Dashboard</h2><p>Este tablero está pendiente de definición.</p><p class="subtitle">El análisis de puertos y el mapa están en la pestaña Atenuados.</p><button type="button" id="back-atenuados">Volver a Atenuados</button></article></section>
 </main>
-<footer>Centro de Análisis Operativo · Atenuados V-2.52 · Análisis manual local · Dashboard pendiente de definición</footer>
+<footer>Centro de Análisis Operativo · Atenuados V-2.53 · Análisis manual local · Dashboard pendiente de definición</footer>
 
 <input type="file" id="at240-file" accept=".xlsx" hidden>
 <dialog id="at240-upload" class="upload-dialog" aria-labelledby="at240-upload-title"><div class="upload-title" id="at240-upload-title">Atenuados · Carga de Excel</div><div class="cloud-scene" aria-hidden="true"><div class="cloud">☁<span>↑</span></div><div class="excel">XLS</div></div><h3 id="at240-upload-heading">Procesando archivo Excel…</h3><p id="at240-upload-stage" role="status" aria-live="polite">Preparando lectura…</p><div class="upload-caption"><span>Progreso de carga</span><strong id="at240-upload-percent">0 %</strong></div><div class="upload-track" role="progressbar" aria-label="Avance de la carga" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="at240-upload-track"><div id="at240-upload-fill"></div></div><div id="at240-upload-detail" class="upload-detail" aria-live="polite"></div><button type="button" id="at240-upload-cancel">Cancelar carga</button><button type="button" id="at240-upload-accept" disabled>Aceptar</button></dialog>
