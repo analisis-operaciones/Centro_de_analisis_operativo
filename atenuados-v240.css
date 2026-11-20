@@ -318,3 +318,7 @@ dialog{padding:23px;border:1px solid var(--line);border-radius:11px;color:var(--
 .port-search input:focus{outline:2px solid #ff9a55;outline-offset:0}
 .port-search button{height:30px;padding:0 12px;font-size:12px;font-weight:bold;background:var(--orange);border-color:var(--orange);color:#fff;border-radius:7px}
 .port-search button:disabled,.port-search input:disabled{opacity:.6}
+
+/* V-2.52 · Detalle de puerto con 5 botones (Exportar puertos) */
+.port-actions{grid-template-columns:repeat(5,minmax(0,1fr))}
+.port-actions button{height:auto;min-height:30px;padding:3px 4px;line-height:1.15;white-space:normal}

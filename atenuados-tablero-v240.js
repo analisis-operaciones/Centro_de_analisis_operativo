@@ -243,7 +243,7 @@ function panel(){
   box.append(portHead(),el('p','port-full','Selecciona un puerto de la lista'));
   const g=el('div','port-fields');for(const l of ['Cuentas','Atenuadas','Potencias en rango','OFF','Sin medición','Duplicadas','Sin coordenadas','%','Estado']){const d=el('div',l==='Atenuadas'?'hot':'');d.append(el('strong','',l==='%'?'0 %':l==='Estado'?'—':'0'),el('span','',l));g.append(d);}
   box.append(g,el('p','port-meta','Mediana — · peor — · mejor —'));
-  const act=el('div','port-actions');for(const [t,c] of [['Regresar',''],['Exportar cuentas',''],['Gráfica',''],['Ver cuentas','primary']]){const b=el('button',c,t);b.type='button';b.disabled=true;act.append(b);}
+  const act=el('div','port-actions');for(const [t,c] of [['Regresar',''],['Exportar cuentas',''],['Exportar puertos',''],['Gráfica',''],['Ver cuentas','primary']]){const b=el('button',c,t);b.type='button';b.disabled=true;if(t==='Exportar puertos')portsButton(b);act.append(b);}
   box.append(act);drawChart();return;
  }
  const all=accountsByPort.get(p.i)||[],noCoords=all.filter(a=>a.lat==null).length,shown=all.length-noCoords;
@@ -263,7 +263,8 @@ function panel(){
  const see=el('button','primary',filterOn?`En mapa: ${fmt(shown)}`:`Ver ${fmt(all.length)} cuentas`);see.type='button';see.id='at240-show-accounts';see.disabled=filterOn;
  see.title=filterOn?'El filtro se quita con Regresar':`${fmt(shown)} con coordenadas se mostrarán en el mapa`;see.onclick=()=>{filterOn=true;drawPort(p,searched&&searched.portId===p.id?searched.account:null);panel();};
  const gr=el('button','','Gráfica');gr.type='button';gr.id='at240-chart-btn';gr.title='Comportamiento del puerto de RX_00h a RX_20h';gr.onclick=()=>{const w=$('at240-chart'),first=w.hidden;w.hidden=false;if(first)placeChart();drawChart();$('at240-chart-x').focus();};
- actions.append(ret,exp,gr,see);box.append(actions);drawChart();
+ const ports=el('button','','Exportar puertos');ports.type='button';portsButton(ports);
+ actions.append(ret,exp,ports,gr,see);box.append(actions);drawChart();
 }
 
 /* V-2.45 · Gráfica de comportamiento del puerto (RX_00h…RX_20h). Solo se cierra con la X; sigue al puerto elegido. */
@@ -418,6 +419,16 @@ function exportPort(p){
  for(const c of dup){const all=c.records.map(r=>{const v=pw(r.raw);return typeof v==='object'?(Math.round(v.d*100)/100).toFixed(2):(v||'(vacío)');}).join(' / ');
   for(const r of c.records)rows.push([r.label,c.account,pw(r.raw),coordText(c.lat,c.lon),all]);}
  save(`CUENTAS_${p.label.replace(/[^A-Z0-9]+/gi,'_')}_${result.snapshot.powerDate}_U${result.threshold}.xlsx`,xlsx('Cuentas',rows,[30,16,22,26,24]));
+}
+// V-2.52 · Excel de todos los puertos atenuados (mismo orden de la lista) con lo que muestra "Detalle de puerto".
+function portsButton(b){b.id='at252-export-ports';b.disabled=!result||!alertList.length;b.title='Excel con todos los puertos atenuados y su detalle';b.onclick=exportPorts;}
+function exportPorts(){
+ if(!result||!alertList.length)return;
+ const rows=[['#','PUERTO','CUENTAS','ATENUADAS','POTENCIAS EN RANGO','OFF','SIN MEDICIÓN','DUPLICADAS','SIN COORDENADAS','% ATENUADAS','ESTADO','MEDIANA (dBm)','PEOR (dBm)','MEJOR (dBm)']];
+ const n=v=>v==null||!Number.isFinite(v)?'':{d:v};
+ alertList.forEach((p,i)=>{const all=accountsByPort.get(p.i)||[];
+  rows.push([i+1,p.label,p.total,p.low,p.good,p.off,p.missing,p.dup,all.filter(a=>a.lat==null).length,p.measured?{d:p.percentage}:'',STATE[p.state],n(p.median),n(p.worst),n(p.best)]);});
+ save(`PUERTOS_ATENUADOS_${result.snapshot.powerDate}_U${result.threshold}_P${result.percentage}_M${result.minimum}.xlsx`,xlsx('Puertos atenuados',rows,[5,28,10,11,18,7,13,12,16,13,13,14,12,12]));
 }
 function exportMissing(){
  // Excel de cuentas sin medición: ubicación, las 6 lecturas tal como vienen y el motivo.
