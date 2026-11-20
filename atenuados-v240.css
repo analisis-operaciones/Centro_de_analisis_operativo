@@ -309,3 +309,12 @@ dialog{padding:23px;border:1px solid var(--line);border-radius:11px;color:var(--
 #at250-banner{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:4000;display:flex;align-items:center;gap:14px;background:#101b43;color:#fff;border-radius:10px;padding:10px 14px;box-shadow:0 8px 24px #0005;font-size:14px;max-width:calc(100vw - 32px)}
 #at250-banner[hidden]{display:none}#at250-banner p{margin:0}
 #at250-banner button{border:0;border-radius:7px;background:#ff690b;color:#fff;font-weight:bold;padding:7px 12px;cursor:pointer;white-space:nowrap}
+
+/* V-2.51 · Buscador de puerto en Detalle de puerto */
+.port-head{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap}
+.port-head h2{margin:0}
+.port-search{display:flex;gap:6px;flex:1 1 230px;max-width:340px;min-width:0}
+.port-search input{flex:1;min-width:0;height:30px;padding:0 9px;font-size:12px;border:1px solid var(--line2);border-radius:7px;background:#fff;color:var(--navy)}
+.port-search input:focus{outline:2px solid #ff9a55;outline-offset:0}
+.port-search button{height:30px;padding:0 12px;font-size:12px;font-weight:bold;background:var(--orange);border-color:var(--orange);color:#fff;border-radius:7px}
+.port-search button:disabled,.port-search input:disabled{opacity:.6}

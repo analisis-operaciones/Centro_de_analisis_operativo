@@ -196,19 +196,58 @@ function back(){
  if(map&&districtBounds)map.fitBounds(districtBounds,{padding:[20,20]});
 }
 
+/* V-2.51 · Buscador de puerto en "Detalle de puerto".
+   Sintaxis estricta: <OLT con guion bajo> <frame/slot/puerto con "/">. Se pueden omitir palabras completas al inicio
+   del nombre (FUENTES_GDL → LAS_FUENTES_GDL) solo si el resto identifica UNA sola OLT de la matriz. Mayúsculas/minúsculas iguales. */
+let portSearchBox=null;
+function portHead(){
+ if(!portSearchBox){
+  const wrap=el('div','port-search'),q=el('input'),go=el('button','','Buscar');
+  q.type='search';q.id='at251-port-q';q.placeholder='Buscar puerto · ej. LAS_FUENTES_GDL 0/5/9';q.setAttribute('aria-label','Buscar puerto atenuado: OLT y frame/slot/puerto');q.autocomplete='off';q.spellcheck=false;
+  go.type='button';go.id='at251-port-go';go.onclick=()=>findPort(q.value);
+  q.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();findPort(q.value);}});
+  wrap.append(q,go);portSearchBox=wrap;
+ }
+ const on=!!result;for(const c of portSearchBox.children)c.disabled=!on;
+ const head=el('div','port-head');head.append(el('h2','','Detalle de puerto'),portSearchBox);return head;
+}
+function parsePortQuery(text){
+ const m=/^\s*([A-Za-z0-9]+(?:_[A-Za-z0-9]+)*)\s+(\d+)\/(\d+)\/(\d+)\s*$/.exec(String(text||''));
+ if(!m)return null;
+ return {name:m[1].toUpperCase(),nums:[+m[2],+m[3],+m[4]]};
+}
+function findPort(text){
+ if(!result)return;
+ const T='Búsqueda de puerto';
+ if(!String(text||'').trim()){say('Escribe el puerto, por ejemplo LAS_FUENTES_GDL 0/5/9.',T);return;}
+ const bad='No se encontró ese puerto en la matriz, revisa sintaxis.';
+ const q=parsePortQuery(text);if(!q){say(bad,T);return;}
+ const olts=result.olts.filter(o=>{const u=String(o).toUpperCase();return u===q.name||u.endsWith('_'+q.name);});
+ if(olts.length!==1){say(bad,T);return;}
+ const key=String(olts[0]).toUpperCase()+' '+q.nums.join('/');
+ const port=result.ports.find(p=>{const sp=p.label.lastIndexOf(' ');return p.label.slice(0,sp).toUpperCase()+' '+p.label.slice(sp+1).split('/').map(Number).join('/')===key;});
+ if(!port){say(bad,T);return;}
+ if(port.state!=='alert'||!rowsById.has(port.id)){say(`El puerto no está atenuado.\n${port.label}`,T);return;}
+ select(port.id);
+ // Lleva la lista hasta el puerto (centrado). La lista tiene desplazamiento suave: se calcula un destino fijo con offsetTop.
+ const box=$('at240-priority'),row=rowsById.get(port.id);
+ if(box&&row){const target=Math.max(0,Math.min(box.scrollHeight-box.clientHeight,row.offsetTop-(box.clientHeight-row.offsetHeight)/2));
+  if(row.offsetTop<box.scrollTop||row.offsetTop+row.offsetHeight>box.scrollTop+box.clientHeight)box.scrollTo({top:target});}
+}
+
 /* Detalle de puerto */
 function panel(){
  const box=$('at240-port'),p=byId.get(selected);box.replaceChildren();box.classList.toggle('is-empty',!p);
  if(!p){
   // V-2.43: la ventana queda fija; sin puerto elegido muestra todo en cero y los botones desactivados.
-  box.append(el('h2','','Detalle de puerto'),el('p','port-full','Selecciona un puerto de la lista'));
+  box.append(portHead(),el('p','port-full','Selecciona un puerto de la lista'));
   const g=el('div','port-fields');for(const l of ['Cuentas','Atenuadas','Potencias en rango','OFF','Sin medición','Duplicadas','Sin coordenadas','%','Estado']){const d=el('div',l==='Atenuadas'?'hot':'');d.append(el('strong','',l==='%'?'0 %':l==='Estado'?'—':'0'),el('span','',l));g.append(d);}
   box.append(g,el('p','port-meta','Mediana — · peor — · mejor —'));
   const act=el('div','port-actions');for(const [t,c] of [['Regresar',''],['Exportar cuentas',''],['Gráfica',''],['Ver cuentas','primary']]){const b=el('button',c,t);b.type='button';b.disabled=true;act.append(b);}
   box.append(act);drawChart();return;
  }
  const all=accountsByPort.get(p.i)||[],noCoords=all.filter(a=>a.lat==null).length,shown=all.length-noCoords;
- box.append(el('h2','','Detalle de puerto'),el('p','port-full',p.label));
+ box.append(portHead(),el('p','port-full',p.label));
  const grid=el('div','port-fields');
  const field=(value,label,hot)=>{const d=el('div',hot?'hot':'');d.append(el('strong','',value),el('span','',label));grid.append(d);};
  field(fmt(p.total),'Cuentas');field(fmt(p.low),'Atenuadas',true);field(fmt(p.good),'Potencias en rango');
@@ -293,7 +332,7 @@ function placeChart(){const m=$('at240-map').getBoundingClientRect();keepInside(
 
 /* Buscador de cuentas */
 const msg=$('at240-msg');
-function say(text){$('at240-msg-text').textContent=text;if(!msg.open)msg.showModal();$('at240-msg-ok').focus();}
+function say(text,title='Búsqueda de cuenta'){$('at240-msg-title').textContent=title;$('at240-msg-text').textContent=text;if(!msg.open)msg.showModal();$('at240-msg-ok').focus();}
 $('at240-msg-ok').onclick=()=>msg.close();
 msg.addEventListener('click',()=>msg.close());   // Se cierra con un clic en cualquier parte del tablero.
 function powerText(a){return a.v!=null?db(a.v)+' dBm':ACCOUNT[a.s][1];}
